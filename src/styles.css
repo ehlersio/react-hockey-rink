@@ -1,0 +1,291 @@
+/* react-hockey-rink — default theme tokens.
+   Override any of these on :root (or a scoped ancestor) to re-theme the
+   component; nothing here requires Tailwind or any other build step. */
+:root {
+  --rink-bg1: #0c1120;
+  --rink-bg3: #172035;
+  --rink-bg4: #1e2a42;
+
+  --rink-red: #cc2200;
+  --rink-red-bright: #ff4422;
+  --rink-red-dim: rgba(204, 34, 0, 0.15);
+  --rink-red-border: rgba(204, 34, 0, 0.35);
+
+  --rink-blue-bright: #4d80f0;
+  --rink-blue-dim: rgba(34, 68, 170, 0.15);
+
+  --rink-amber: #f0a030;
+
+  --rink-text: #e4e8f0;
+  --rink-text-muted: #8a99aa;
+  --rink-text-dim: #808a94;
+
+  --rink-border: rgba(255, 255, 255, 0.06);
+  --rink-border-2: rgba(255, 255, 255, 0.12);
+
+  --rink-radius-sm: 6px;
+  --rink-radius-lg: 14px;
+
+  --rink-font-display: 'Barlow Condensed', sans-serif;
+  --rink-font-mono: 'DM Mono', monospace;
+
+  /* The "home"/primary team's accent color — set this per-team at runtime,
+     or pass it directly via the `teamColor` prop. */
+  --rink-team-primary: #ff4422;
+}
+
+@keyframes rhr-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes rhr-pop-in {
+  from { transform: scale(0.94) translateY(8px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes rhr-tip-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.rhr-wrap { display: flex; flex-direction: column; gap: 8px; position: relative; }
+
+.rhr-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.rhr-filters { display: flex; gap: 5px; flex-wrap: wrap; }
+.rhr-controls { display: flex; gap: 5px; }
+
+/* ── Toolbar buttons ────────────────────────────────────────── */
+.rhr-btn {
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 0.5px solid var(--rink-border-2);
+  white-space: nowrap;
+  transition: all 0.15s;
+  background: transparent;
+  color: var(--rink-text-muted);
+  cursor: pointer;
+}
+.rhr-btn:disabled { opacity: 0.3; cursor: default; }
+.rhr-btn:enabled:hover { color: var(--rink-text); border-color: var(--rink-border-2); }
+.rhr-btn-on { background: var(--rink-red-dim); border-color: var(--rink-red-border); color: var(--rink-red-bright); }
+
+.rhr-btn-ot { border-color: rgba(240, 160, 48, 0.3); color: var(--rink-amber); }
+.rhr-btn-ot:enabled:hover { border-color: rgba(240, 160, 48, 0.6); }
+.rhr-btn-ot.rhr-btn-on { background: rgba(240, 160, 48, 0.15); border-color: rgba(240, 160, 48, 0.5); color: var(--rink-amber); }
+
+.rhr-btn-heat.rhr-btn-on { background: rgba(255, 100, 0, 0.18); border-color: rgba(255, 100, 0, 0.5); color: #ff6600; }
+
+.rhr-btn-filter { display: flex; align-items: center; gap: 5px; }
+.rhr-btn-filter.rhr-btn-on { background: rgba(204, 34, 0, 0.2); border-color: rgba(204, 34, 0, 0.4); color: var(--rink-red-bright); }
+
+/* ── Player filter dropdown ─────────────────────────────────── */
+.rhr-filter-wrap { position: relative; }
+.rhr-filter-clear { font-size: 10px; opacity: 0.7; padding: 0 1px; border-radius: 9999px; }
+.rhr-filter-clear:hover { opacity: 1; }
+
+.rhr-filter-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 200;
+  background: var(--rink-bg1);
+  border: 0.5px solid var(--rink-border-2);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  min-width: 160px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px;
+}
+.rhr-filter-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+  color: var(--rink-text-muted);
+}
+.rhr-filter-option:hover { background: var(--rink-bg3); color: var(--rink-text); }
+.rhr-filter-option-active,
+.rhr-filter-option-active:hover { background: rgba(204, 34, 0, 0.15); color: var(--rink-red-bright); font-weight: 600; }
+.rhr-filter-name { flex: 1; }
+
+/* ── Zoom controls ──────────────────────────────────────────── */
+.rhr-zoom-bar { display: flex; align-items: center; gap: 8px; }
+.rhr-zoom-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  border: 0.5px solid var(--rink-border-2);
+  background: var(--rink-bg3);
+  color: var(--rink-text-muted);
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.12s;
+  cursor: pointer;
+}
+.rhr-zoom-btn:disabled { opacity: 0.3; cursor: default; }
+.rhr-zoom-btn:enabled:hover { background: var(--rink-bg4); color: var(--rink-text); }
+.rhr-zoom-track { flex: 1; height: 4px; border-radius: 2px; background: var(--rink-bg4); overflow: hidden; max-width: 120px; }
+.rhr-zoom-fill { height: 100%; background: var(--rink-red); border-radius: 2px; transition: width 0.15s; }
+.rhr-zoom-reset {
+  font-size: 10px;
+  color: var(--rink-text-dim);
+  border: 0.5px solid var(--rink-border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  background: transparent;
+  transition: color 0.12s;
+  cursor: pointer;
+}
+.rhr-zoom-reset:hover { color: var(--rink-text-muted); }
+.rhr-zoom-label { font-size: 10px; font-family: var(--rink-font-mono); color: var(--rink-text-dim); width: 36px; text-align: right; }
+
+/* ── Heat mode controls ─────────────────────────────────────── */
+.rhr-heat-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rhr-heat-label { font-size: 11px; color: var(--rink-text-dim); flex-shrink: 0; }
+.rhr-heat-scale { display: flex; align-items: center; gap: 5px; margin-left: auto; font-size: 10px; color: var(--rink-text-dim); }
+.rhr-heat-scale-low, .rhr-heat-scale-high { font-size: 9px; color: var(--rink-text-dim); }
+.rhr-heat-scale-bar {
+  width: 60px;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #0050c8, #ffb400, #ff6600, #ff0000);
+  flex-shrink: 0;
+}
+
+/* ── Legend ─────────────────────────────────────────────────── */
+.rhr-legend { display: flex; gap: 12px; flex-wrap: wrap; }
+.rhr-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--rink-text-muted); }
+.rhr-leg-dot { width: 8px; height: 8px; border-radius: 9999px; flex-shrink: 0; display: inline-block; }
+.rhr-leg-goal { box-shadow: 0 0 0 2px #333, 0 0 0 3px rgba(255, 255, 255, 0.4); }
+
+/* ── SVG rink ───────────────────────────────────────────────── */
+.rhr-svg-container { overflow: hidden; border-radius: var(--rink-radius-sm); line-height: 1; user-select: none; }
+.rhr-svg { width: 100%; display: block; }
+
+.rhr-empty { text-align: center; padding: 20px 0; font-size: 12px; color: var(--rink-text-dim); font-style: italic; }
+
+/* ── Hover tooltip ──────────────────────────────────────────── */
+.rhr-tip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+  background: var(--rink-bg1);
+  border: 0.5px solid var(--rink-border-2);
+  border-radius: var(--rink-radius-sm);
+  padding: 8px 10px;
+  min-width: 160px;
+  max-width: 210px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  animation: rhr-tip-in 0.1s ease;
+}
+.rhr-tip-type { font-size: 12px; font-weight: 600; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 0.5px solid var(--rink-border); }
+.rhr-tip-primary { color: var(--rink-red-bright); }
+.rhr-tip-opponent { color: var(--rink-blue-bright); }
+.rhr-tip-row { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; padding: 2px 0; }
+.rhr-tip-label { color: var(--rink-text-dim); flex-shrink: 0; }
+.rhr-tip-val { color: var(--rink-text); text-align: right; }
+.rhr-tip-speed { color: var(--rink-amber); font-weight: 600; font-family: var(--rink-font-mono); }
+.rhr-tip-footer {
+  font-size: 10px;
+  color: var(--rink-text-dim);
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 0.5px solid var(--rink-border);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── Click popup ────────────────────────────────────────────── */
+.rhr-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: rhr-fade-in 0.15s ease;
+}
+.rhr-popup {
+  background: var(--rink-bg1);
+  border: 0.5px solid var(--rink-border-2);
+  border-radius: var(--rink-radius-lg);
+  width: 100%;
+  max-width: 360px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: rhr-pop-in 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.rhr-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 0.5px solid var(--rink-border);
+  border-top-left-radius: var(--rink-radius-lg);
+  border-top-right-radius: var(--rink-radius-lg);
+}
+/* Same specificity as .rhr-popup-goal below (one class each) — declared
+   first so a goal's green background always wins over the team-color
+   background regardless of which team scored, matching source-order intent. */
+.rhr-popup-primary { background: rgba(204, 34, 0, 0.08); }
+.rhr-popup-opponent { background: rgba(34, 68, 170, 0.08); }
+.rhr-popup-goal { background: rgba(61, 186, 126, 0.08); }
+
+.rhr-popup-type-row { display: flex; align-items: center; gap: 8px; }
+.rhr-popup-type-icon { font-size: 18px; }
+.rhr-popup-type-label { font-family: var(--rink-font-display); font-size: 16px; font-weight: 700; color: var(--rink-text); }
+.rhr-popup-team-badge { font-family: var(--rink-font-display); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+.rhr-popup-badge-primary { background: var(--rink-red-dim); color: var(--rink-red-bright); }
+.rhr-popup-badge-opponent { background: var(--rink-blue-dim); color: var(--rink-blue-bright); }
+.rhr-popup-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--rink-bg3);
+  color: var(--rink-text-muted);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.12s;
+  border: none;
+  cursor: pointer;
+}
+.rhr-popup-close:hover { background: var(--rink-bg4); color: var(--rink-text); }
+
+.rhr-popup-body { padding: 0 16px 16px; }
+.rhr-popup-section { margin-top: 14px; }
+.rhr-popup-section-label {
+  font-family: var(--rink-font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rink-text-dim);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 0.5px solid var(--rink-border);
+}
+.rhr-popup-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 4px 0; font-size: 13px; }
+.rhr-popup-field { color: var(--rink-text-muted); flex-shrink: 0; font-size: 12px; }
+.rhr-popup-value { color: var(--rink-text); text-align: right; }
+.rhr-popup-name { font-weight: 500; }
+.rhr-popup-speed { color: var(--rink-amber); font-weight: 600; font-family: var(--rink-font-mono); }
+.rhr-popup-untracked { color: var(--rink-text-dim); font-size: 11px; }

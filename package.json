@@ -1,0 +1,61 @@
+{
+  "name": "react-hockey-rink",
+  "version": "0.1.0",
+  "description": "An interactive, themeable ice rink shot chart for React — dots, heat maps, zoom/pan, and period/player filtering, with pixel-accurate NHL rink markings.",
+  "type": "module",
+  "main": "./dist/react-hockey-rink.cjs",
+  "module": "./dist/react-hockey-rink.js",
+  "exports": {
+    ".": {
+      "import": "./dist/react-hockey-rink.js",
+      "require": "./dist/react-hockey-rink.cjs"
+    },
+    "./styles.css": "./dist/react-hockey-rink.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "keywords": [
+    "react",
+    "hockey",
+    "nhl",
+    "rink",
+    "shot-chart",
+    "heatmap",
+    "sports",
+    "data-viz"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "demo": "vite --config demo/vite.config.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^6.0.5",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "jsdom": "^25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  }
+}
