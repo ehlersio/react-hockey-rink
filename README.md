@@ -1,5 +1,8 @@
 # react-hockey-rink
 
+[![npm version](https://img.shields.io/npm/v/react-hockey-rink.svg)](https://www.npmjs.com/package/react-hockey-rink)
+[![license](https://img.shields.io/npm/l/react-hockey-rink.svg)](./LICENSE)
+
 An interactive, themeable ice rink shot chart for React. Dots or a kernel-density
 heat map, zoom/pan, period and player filtering, hover tooltips, and click-through
 shot detail — all rendered on a pixel-accurate NHL rink (200ft × 85ft, real goal
