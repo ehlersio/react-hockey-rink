@@ -43,7 +43,7 @@ export default function App() {
         <label><input type="checkbox" checked={noEvents} onChange={e => setNoEvents(e.target.checked)} /> empty state</label>
       </div>
 
-      <div style={cardStyle}>
+      <div style={cardStyle} id="capture-target">
         <HockeyRink
           events={noEvents ? [] : demoEvents}
           flipPerspective={flipPerspective}

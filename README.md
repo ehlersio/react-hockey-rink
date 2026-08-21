@@ -11,6 +11,8 @@ creases, faceoff circles, trapezoid, and restraint marks).
 No CSS framework required — ships its own default-themed stylesheet you can
 override with CSS custom properties.
 
+![react-hockey-rink demo — dots mode with period/player filters, zoom controls, and a heat-map toggle](./docs/screenshot.png)
+
 ## Install
 
 ```bash
