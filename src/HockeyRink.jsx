@@ -155,16 +155,14 @@ export default function HockeyRink({
   }
   function handleMouseUp() { setIsPanning(false); }
 
-  // Touch pinch-zoom
+  // Touch pinch-zoom (single-finger touch is intentionally a no-op: the rink
+  // should stay fixed in place on touch devices and only respond to pinch)
   const lastTouch = useRef(null);
   function handleTouchStart(e) {
     if (e.touches.length === 2) {
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       lastTouch.current = { dist: Math.sqrt(dx*dx + dy*dy), zoom };
-    } else if (e.touches.length === 1) {
-      setIsPanning(true);
-      panStart.current = { x: e.touches[0].clientX - pan.x, y: e.touches[0].clientY - pan.y };
     }
   }
   function handleTouchMove(e) {
@@ -175,8 +173,6 @@ export default function HockeyRink({
       const dist = Math.sqrt(dx*dx + dy*dy);
       const scale = dist / lastTouch.current.dist;
       setZoom(clampZoom(lastTouch.current.zoom * scale));
-    } else if (e.touches.length === 1 && isPanning) {
-      setPan({ x: e.touches[0].clientX - panStart.current.x, y: e.touches[0].clientY - panStart.current.y });
     }
   }
   function handleTouchEnd() {
