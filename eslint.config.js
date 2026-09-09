@@ -25,6 +25,7 @@ export default [
         clearTimeout: "readonly",
         requestAnimationFrame: "readonly",
         cancelAnimationFrame: "readonly",
+        HTMLCanvasElement: "readonly",
       },
     },
     settings: {
