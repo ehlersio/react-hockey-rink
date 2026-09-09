@@ -289,3 +289,11 @@
 .rhr-popup-name { font-weight: 500; }
 .rhr-popup-speed { color: var(--rink-amber); font-weight: 600; font-family: var(--rink-font-mono); }
 .rhr-popup-untracked { color: var(--rink-text-dim); font-size: 11px; }
+
+.rhr-popup-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: var(--rink-radius-lg);
+}
