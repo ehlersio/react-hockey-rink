@@ -46,6 +46,18 @@ export default function ShotPopup({ event: e, onClose, displayAbbr = 'TEAM' }) {
         </div>
 
         <div className="rhr-popup-body">
+          {isGoal && e.videoUrl && (
+            <div className="rhr-popup-section rhr-popup-video-section">
+              <iframe
+                className="rhr-popup-video"
+                src={e.videoUrl}
+                allow="fullscreen"
+                allowFullScreen
+                title={`${shooterName} goal video`}
+              />
+            </div>
+          )}
+
           <div className="rhr-popup-section">
             <div className="rhr-popup-section-label">When</div>
             <div className="rhr-popup-row">

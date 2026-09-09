@@ -49,6 +49,31 @@ describe('HockeyRink', () => {
     expect(container.querySelector('.rhr-popup')).toBeInTheDocument();
   });
 
+  it('renders the goal video as the first popup section when the event has a videoUrl', () => {
+    const videoEvents = [
+      { id: 5, team: 'primary', type: 'goal', x: 84, y: 3, period: 1, timeInPeriod: '9:14', shooterId: 1, shooterName: 'A. Player', videoUrl: 'https://example.com/clip.html' },
+    ];
+    const { container } = render(<HockeyRink events={videoEvents} teamAbbr="CAR" />);
+    const dot = container.querySelector('.rhr-svg circle[style*="cursor: pointer"]');
+    fireEvent.click(dot);
+    const iframe = container.querySelector('.rhr-popup-video');
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute('src', 'https://example.com/clip.html');
+    // First child of the popup body, ahead of the "When" section.
+    expect(container.querySelector('.rhr-popup-body > :first-child .rhr-popup-video')).toBeInTheDocument();
+  });
+
+  it('omits the video section for a goal with no videoUrl', () => {
+    const noVideoEvents = [
+      { id: 5, team: 'primary', type: 'goal', x: 84, y: 3, period: 1, timeInPeriod: '9:14', shooterId: 1, shooterName: 'A. Player' },
+    ];
+    const { container } = render(<HockeyRink events={noVideoEvents} teamAbbr="CAR" />);
+    const dot = container.querySelector('.rhr-svg circle[style*="cursor: pointer"]');
+    fireEvent.click(dot);
+    expect(container.querySelector('.rhr-popup')).toBeInTheDocument();
+    expect(container.querySelector('.rhr-popup-video')).not.toBeInTheDocument();
+  });
+
   it('switches to heat mode without throwing', () => {
     const { container } = render(<HockeyRink events={events} teamAbbr="CAR" />);
     expect(() => {

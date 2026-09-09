@@ -90,6 +90,7 @@ type Event = {
   shotType?: string;
   shotSpeed?: number;
   zoneCode?: 'O' | 'D' | 'N';
+  videoUrl?: string;         // goal only — embeddable clip URL (iframe src), shown at the top of the popup
 };
 ```
 
