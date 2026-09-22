@@ -14,7 +14,11 @@ function popupHeaderClasses(isGoal, isPrimary) {
   return classes.join(' ');
 }
 
-export default function ShotPopup({ event: e, onClose, displayAbbr = 'TEAM' }) {
+// `renderMedia(event)` lets the host app put its own media at the top of
+// the popup -- a tracking replay, a different player, a still. It's called
+// for every event; return null (or don't pass it) to keep the default,
+// which is the goal's `videoUrl` in an iframe.
+export default function ShotPopup({ event: e, onClose, displayAbbr = 'TEAM', renderMedia }) {
   const isPrimary   = e.team === 'primary';
   const shooterName = e.shooterName || (isPrimary ? `Unknown ${displayAbbr}` : 'Unknown');
   const goalieName  = e.goalieName  || null;
@@ -25,6 +29,7 @@ export default function ShotPopup({ event: e, onClose, displayAbbr = 'TEAM' }) {
   const angle  = Math.abs(Math.atan2(Math.abs(e.y), Math.abs(Math.abs(e.x) - 89)) * (180 / Math.PI)).toFixed(1);
   const zone   = zoneLabel(e.x, e.y);
   const isGoal = e.type === 'goal';
+  const media  = renderMedia ? renderMedia(e) : null;
 
   let danger = 'Low danger';
   const distNum = parseFloat(dist);
@@ -46,7 +51,9 @@ export default function ShotPopup({ event: e, onClose, displayAbbr = 'TEAM' }) {
         </div>
 
         <div className="rhr-popup-body">
-          {isGoal && e.videoUrl && (
+          {media ? (
+            <div className="rhr-popup-section rhr-popup-media-section">{media}</div>
+          ) : isGoal && e.videoUrl && (
             <div className="rhr-popup-section rhr-popup-video-section">
               <iframe
                 className="rhr-popup-video"
