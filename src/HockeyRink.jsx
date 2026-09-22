@@ -39,6 +39,7 @@ export default function HockeyRink({
   flipPerspective = false,
   teamAbbr = 'TEAM',
   teamColor,
+  renderMedia,
 }) {
   const displayAbbr  = teamAbbr;
   const displayColor = teamColor || 'var(--rink-team-primary)';
@@ -411,7 +412,7 @@ export default function HockeyRink({
 
       {/* Click popup — dots mode + goals in heat mode */}
       {!readOnly && (viewMode === 'dots' || viewMode === 'heat') && selected && (
-        <ShotPopup event={selected} onClose={() => setSelected(null)} displayAbbr={displayAbbr} />
+        <ShotPopup event={selected} onClose={() => setSelected(null)} displayAbbr={displayAbbr} renderMedia={renderMedia} />
       )}
 
       {events.length === 0 && (

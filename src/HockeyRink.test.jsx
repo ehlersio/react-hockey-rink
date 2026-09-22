@@ -74,6 +74,40 @@ describe('HockeyRink', () => {
     expect(container.querySelector('.rhr-popup-video')).not.toBeInTheDocument();
   });
 
+  it('renderMedia replaces the default video at the top of the popup', () => {
+    const videoEvents = [
+      { id: 5, team: 'primary', type: 'goal', x: 84, y: 3, period: 1, timeInPeriod: '9:14', shooterId: 1, shooterName: 'A. Player', videoUrl: 'https://example.com/clip.html' },
+    ];
+    const seen = [];
+    const renderMedia = (ev) => { seen.push(ev); return <div className="my-media">tracking replay</div>; };
+    const { container } = render(<HockeyRink events={videoEvents} teamAbbr="CAR" renderMedia={renderMedia} />);
+    fireEvent.click(container.querySelector('.rhr-svg circle[style*="cursor: pointer"]'));
+    expect(container.querySelector('.rhr-popup-body > :first-child .my-media')).toBeInTheDocument();
+    expect(container.querySelector('.rhr-popup-video')).not.toBeInTheDocument();
+    expect(seen).toHaveLength(1);
+    expect(seen[0].id).toBe(5);
+  });
+
+  it('renderMedia returning null keeps the default video', () => {
+    const videoEvents = [
+      { id: 5, team: 'primary', type: 'goal', x: 84, y: 3, period: 1, timeInPeriod: '9:14', shooterId: 1, shooterName: 'A. Player', videoUrl: 'https://example.com/clip.html' },
+    ];
+    const { container } = render(<HockeyRink events={videoEvents} teamAbbr="CAR" renderMedia={() => null} />);
+    fireEvent.click(container.querySelector('.rhr-svg circle[style*="cursor: pointer"]'));
+    expect(container.querySelector('.rhr-popup-video')).toHaveAttribute('src', 'https://example.com/clip.html');
+  });
+
+  it('renderMedia can add media to a shot that is not a goal', () => {
+    const shotEvents = [
+      { id: 6, team: 'opponent', type: 'shot-on-goal', x: 60, y: -10, period: 2, timeInPeriod: '4:02', shooterId: 2, shooterName: 'B. Player' },
+    ];
+    const { container } = render(
+      <HockeyRink events={shotEvents} teamAbbr="CAR" renderMedia={(ev) => <div className="my-media">{ev.type}</div>} />,
+    );
+    fireEvent.click(container.querySelector('.rhr-svg circle[style*="cursor: pointer"]'));
+    expect(container.querySelector('.my-media')).toHaveTextContent('shot-on-goal');
+  });
+
   it('switches to heat mode without throwing', () => {
     const { container } = render(<HockeyRink events={events} teamAbbr="CAR" />);
     expect(() => {

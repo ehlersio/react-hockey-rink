@@ -69,6 +69,7 @@ view of the same data).
 | `flipPerspective`    | `boolean`                         | `false` | Flips which side the primary team attacks — for a defensive/PK-style view. |
 | `hidePlayerFilter`   | `boolean`                         | `false` | Hides the player-filter dropdown even if shooters are present. |
 | `readOnly`           | `boolean`                         | `false` | Hides the toolbar, zoom controls, legend, tooltip, and popup — renders a static rink. |
+| `renderMedia`        | `(event) => ReactNode`            | —       | Your own media at the top of the popup — a replay, a different player, a still. Called for every event; return `null` to keep the default (a goal's `videoUrl` in an iframe). |
 
 ### Event schema
 
@@ -91,6 +92,7 @@ type Event = {
   shotSpeed?: number;
   zoneCode?: 'O' | 'D' | 'N';
   videoUrl?: string;         // goal only — embeddable clip URL (iframe src), shown at the top of the popup
+                             // (or supply your own media with the renderMedia prop)
 };
 ```
 
