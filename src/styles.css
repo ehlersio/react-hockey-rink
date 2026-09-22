@@ -290,6 +290,10 @@
 .rhr-popup-speed { color: var(--rink-amber); font-weight: 600; font-family: var(--rink-font-mono); }
 .rhr-popup-untracked { color: var(--rink-text-dim); font-size: 11px; }
 
+/* A host's renderMedia may return a component that decides it has nothing
+   to show; don't leave its section taking up space. */
+.rhr-popup-media-section:empty { display: none; }
+
 .rhr-popup-video {
   display: block;
   width: 100%;
