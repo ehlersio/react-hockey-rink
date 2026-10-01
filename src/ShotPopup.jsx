@@ -138,12 +138,6 @@ export default function ShotPopup({ event: e, onClose, displayAbbr = 'TEAM', ren
                 <span className="rhr-popup-value rhr-popup-speed">{e.shotSpeed} mph</span>
               </div>
             )}
-            {e.shotSpeed == null && (
-              <div className="rhr-popup-row">
-                <span className="rhr-popup-field">Shot speed</span>
-                <span className="rhr-popup-value rhr-popup-untracked">Not tracked</span>
-              </div>
-            )}
             <div className="rhr-popup-row">
               <span className="rhr-popup-field">Danger</span>
               <span className="rhr-popup-value">{danger}</span>

@@ -49,6 +49,26 @@ describe('HockeyRink', () => {
     expect(container.querySelector('.rhr-popup')).toBeInTheDocument();
   });
 
+  it('shows the shot speed when the event has one', () => {
+    const speedEvents = [
+      { id: 7, team: 'primary', type: 'shot-on-goal', x: 70, y: 5, period: 1, timeInPeriod: '5:00', shooterId: 1, shooterName: 'A. Player', shotSpeed: 94 },
+    ];
+    const { container } = render(<HockeyRink events={speedEvents} teamAbbr="CAR" />);
+    fireEvent.click(container.querySelector('.rhr-svg circle[style*="cursor: pointer"]'));
+    expect(container.querySelector('.rhr-popup')).toHaveTextContent('94 mph');
+  });
+
+  it('leaves the shot speed row out when the event has none', () => {
+    const plainEvents = [
+      { id: 8, team: 'primary', type: 'shot-on-goal', x: 70, y: 5, period: 1, timeInPeriod: '5:00', shooterId: 1, shooterName: 'A. Player' },
+    ];
+    const { container } = render(<HockeyRink events={plainEvents} teamAbbr="CAR" />);
+    fireEvent.click(container.querySelector('.rhr-svg circle[style*="cursor: pointer"]'));
+    const popup = container.querySelector('.rhr-popup');
+    expect(popup).not.toHaveTextContent('Shot speed');
+    expect(popup).not.toHaveTextContent('Not tracked');
+  });
+
   it('renders the goal video as the first popup section when the event has a videoUrl', () => {
     const videoEvents = [
       { id: 5, team: 'primary', type: 'goal', x: 84, y: 3, period: 1, timeInPeriod: '9:14', shooterId: 1, shooterName: 'A. Player', videoUrl: 'https://example.com/clip.html' },
