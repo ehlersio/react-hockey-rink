@@ -1,6 +1,6 @@
 {
   "name": "react-hockey-rink",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An interactive, themeable ice rink shot chart for React \u2014 dots, heat maps, zoom/pan, and period/player filtering, with pixel-accurate NHL rink markings.",
   "type": "module",
   "main": "./dist/react-hockey-rink.cjs",
