@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import HockeyRink from '../../src/HockeyRink.jsx';
+import ShotAreaMap from '../../src/ShotAreaMap.jsx';
+import { demoGoalieAreas } from './goalieAreas.js';
 import '../../src/styles.css';
 import { demoEvents } from './fixtures.js';
 
@@ -26,6 +28,7 @@ export default function App() {
   const [readOnly, setReadOnly] = useState(false);
   const [hidePlayerFilter, setHidePlayerFilter] = useState(false);
   const [noEvents, setNoEvents] = useState(false);
+  const [area, setArea] = useState(null);
 
   return (
     <div style={wrapStyle}>
@@ -52,6 +55,30 @@ export default function App() {
           teamAbbr="CAR"
           teamColor="#cc2200"
         />
+      </div>
+
+      <h2 style={{ fontSize: 16, margin: '8px 0' }}>ShotAreaMap</h2>
+      <p style={{ color: 'var(--rink-text-muted)', fontSize: 13, marginBottom: 12 }}>
+        The NHL's 17 shot areas, here one goalie's save % per area, coloured by
+        its percentile among NHL goalies. Tap an area.
+      </p>
+      <div style={cardStyle} id="capture-areas">
+        <ShotAreaMap
+          areas={Object.fromEntries(Object.entries(demoGoalieAreas).map(([name, a]) => {
+            // An area the goalie faced no shots from has no save % at all
+            const ok = a.shots >= 5 && a.svPct != null && a.pct != null;
+            return [name, {
+              fill: ok ? (a.pct >= 0.67 ? '#4ade80' : a.pct >= 0.34 ? '#fbbf24' : '#f87171') : undefined,
+              label: ok ? a.svPct.toFixed(3).replace(/^0/, '') : undefined,
+              title: a.svPct != null ? `${name}: ${a.shots} shots, ${a.svPct.toFixed(3)} SV%` : `${name}: no shots`,
+            }];
+          }))}
+          selected={area}
+          onSelect={setArea}
+        />
+        <p style={{ fontSize: 13, marginTop: 8, color: 'var(--rink-text-muted)' }}>
+          {!area ? 'No area selected' : demoGoalieAreas[area].svPct == null ? `${area}: no shots` : `${area}: ${demoGoalieAreas[area].shots} shots, ${demoGoalieAreas[area].svPct.toFixed(3)} SV%, ${Math.round(demoGoalieAreas[area].pct * 100)}th percentile`}
+        </p>
       </div>
     </div>
   );

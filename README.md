@@ -96,6 +96,43 @@ type Event = {
 };
 ```
 
+## Shot areas
+
+The NHL breaks shots down into 17 areas (NHL EDGE's shot-location data:
+"Low Slot", "L Circle", "Behind the Net", ...). It publishes per-area counts
+and save/shooting percentages by name, but not the areas' shapes. This
+library ships a classifier and a map for them.
+
+```jsx
+import { ShotAreaMap, shotArea, SHOT_AREAS } from 'react-hockey-rink';
+
+shotArea(78, 2);   // 'Low Slot' -- (x, y) in play-by-play feet, attacking right
+SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spellings
+
+<ShotAreaMap
+  areas={{
+    'Low Slot': { fill: '#4ade80', label: '.850', title: 'Low Slot: 120 shots, .850' },
+    'L Circle': { fill: '#fbbf24', label: '.901' },
+  }}
+  selected={area}
+  onSelect={setArea}   // optional: makes the areas tappable
+/>
+```
+
+- **Coordinates:** `shotArea(x, y)` takes the shot attacking right (the net at x = 89).
+  Flip a shot at the left net (x → -x, y → -y) first.
+- **L and R:** the shooter's left and right as they face the net, so the goalie's right and left.
+  With y up, that's the top (+y) and bottom (-y) of the rink.
+- **Fitted boundaries:** the boundaries (`AREA_BOUNDS`) are fitted to the NHL's own counts.
+  They were checked on 30 goalies' 2025-26 regular seasons (~69,000 shots on goal).
+  On average 2.7% of a goalie's shots land in a different area than the NHL counts there, at most 4.3%.
+  It's the same on goalies held out of the fit as on the ones it was fitted to.
+- **The map:** `ShotAreaMap` draws the attacking half plus a strip past the red line.
+  `children` are drawn on top in the rink's SVG coordinates (`toSvg(x, y)` converts from feet), e.g. shot dots on the same rink.
+  `outlines={false}` leaves out the outlines of areas with no fill.
+  An area missing from `areas` is drawn as an empty outline.
+  Labels are colored with `--rink-area-label` / `--rink-area-label-halo`, and outlines with `--rink-area-stroke` / `--rink-area-selected`.
+
 ## Theming
 
 Every color, radius, and font in the default stylesheet is a CSS custom

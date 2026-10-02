@@ -6,7 +6,7 @@ import { W, H, CX, CY } from './geometry.js';
  * Renders into a 600x255 SVG viewBox — see geometry.js for the shared
  * coordinate system used by HockeyRink and HeatmapLayer.
  */
-export default function RinkMarkings({ showHalf, flipPerspective = false, teamAbbr = 'TEAM', teamColor }) {
+export default function RinkMarkings({ showHalf, flipPerspective = false, teamAbbr = 'TEAM', teamColor, showZoneLabels = true }) {
   return (
     <g>
       {/* ── Rink surface (corner radius 28ft = 84px) ── */}
@@ -94,13 +94,13 @@ export default function RinkMarkings({ showHalf, flipPerspective = false, teamAb
 
       {/* ── Zone labels (centered between where the corner radius starts, 84px from
            each end, and that side's blue line — not pinned to the corner itself) ── */}
-      {!showHalf && (
+      {showZoneLabels && !showHalf && (
         <>
           <text x="154.5" y="18" textAnchor="middle" fontSize="9" fill="#2255aa" opacity="0.6" fontFamily="sans-serif">Opponent offensive zone</text>
           <text x="445.5" y="18" textAnchor="middle" fontSize="9" fill={teamColor || 'var(--rink-team-primary)'} opacity="0.7" fontFamily="sans-serif">{teamAbbr} offensive zone</text>
         </>
       )}
-      {showHalf && (
+      {showZoneLabels && showHalf && (
         <text x="445.5" y="18" textAnchor="middle" fontSize="9" fill={flipPerspective ? '#2255aa' : (teamColor || 'var(--rink-team-primary)')} opacity="0.8" fontFamily="sans-serif">
           {flipPerspective ? 'Opponent offensive zone' : `${teamAbbr} offensive zone`}
         </text>
