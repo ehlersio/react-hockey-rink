@@ -30,10 +30,13 @@ const PATHS = Object.fromEntries(Object.entries(SHOT_AREA_POLYGONS).map(([name, 
  *   left out is drawn as an empty outline.
  * @param {string}   [props.selected]  area to outline as selected
  * @param {(name: string) => void} [props.onSelect]  makes the areas tappable
+ * @param {boolean}  [props.outlines=true]  draw the empty areas' outlines
+ * @param {React.ReactNode} [props.children]  drawn on top, in the rink's SVG
+ *   coordinates (toSvg(x, y) from feet) -- e.g. shot dots on the same rink
  * @param {string}   [props.ariaLabel]
  * @param {string}   [props.className]
  */
-export default function ShotAreaMap({ areas = {}, selected = null, onSelect, ariaLabel = 'Shot areas', className = '' }) {
+export default function ShotAreaMap({ areas = {}, selected = null, onSelect, outlines = true, children, ariaLabel = 'Shot areas', className = '' }) {
   const clipId = `rhr-area-clip-${useId().replace(/[^a-zA-Z0-9-]/g, '')}`;
   const interactive = typeof onSelect === 'function';
 
@@ -57,6 +60,7 @@ export default function ShotAreaMap({ areas = {}, selected = null, onSelect, ari
         {SHOT_AREAS.map(({ name }) => {
           const a = areas[name] || {};
           const isSelected = selected === name;
+          if (!outlines && !a.fill && !isSelected) return null;
           return (
             <path
               key={name}
@@ -108,6 +112,7 @@ export default function ShotAreaMap({ areas = {}, selected = null, onSelect, ari
           );
         })}
       </g>
+      {children}
     </svg>
   );
 }

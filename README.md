@@ -128,6 +128,8 @@ SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spel
   On average 2.7% of a goalie's shots land in a different area than the NHL counts there, at most 4.3%.
   It's the same on goalies held out of the fit as on the ones it was fitted to.
 - **The map:** `ShotAreaMap` draws the attacking half plus a strip past the red line.
+  `children` are drawn on top in the rink's SVG coordinates (`toSvg(x, y)` converts from feet), e.g. shot dots on the same rink.
+  `outlines={false}` leaves out the outlines of areas with no fill.
   An area missing from `areas` is drawn as an empty outline.
   Labels are colored with `--rink-area-label` / `--rink-area-label-halo`, and outlines with `--rink-area-stroke` / `--rink-area-selected`.
 

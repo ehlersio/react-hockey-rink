@@ -97,6 +97,17 @@ describe('ShotAreaMap', () => {
     expect(container.querySelector('path[data-area="L Circle"]').getAttribute('aria-pressed')).toBe('true');
   });
 
+  it('draws children on the same rink, and can leave empty outlines out', () => {
+    const { container } = render(
+      <ShotAreaMap areas={{ 'Low Slot': { fill: '#f87171' } }} outlines={false}>
+        <circle className="dot" cx="500" cy="127" r="3" />
+      </ShotAreaMap>
+    );
+    expect(container.querySelector('svg circle.dot')).not.toBeNull();
+    // only the filled area is drawn
+    expect(container.querySelectorAll('path.rhr-area')).toHaveLength(1);
+  });
+
   it('is a plain picture without onSelect', () => {
     const { container } = render(<ShotAreaMap areas={{}} />);
     expect(container.querySelector('path[data-area="Crease"]').getAttribute('role')).toBeNull();
