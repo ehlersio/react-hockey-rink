@@ -2,7 +2,8 @@ name: CI
 
 # Lint, test, and build on every PR, so Dependabot bumps get checked
 # before they merge. The build step catches a vite bump that breaks the
-# published dist/ output.
+# published dist/ output. npm audit and dependency-review fail the run
+# on high-severity advisories in shipped or newly added dependencies.
 
 on:
   pull_request:
@@ -24,6 +25,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Only shipped (non-dev) dependencies gate the build.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Lint
         run: npm run lint
 
@@ -32,3 +37,16 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: never
