@@ -23,6 +23,11 @@ const END_X = 100;
 
 // Fitted boundaries, in feet and degrees. Distances and angles are from the
 // center of the goal line; 0 degrees points straight out from the net.
+// Fitted by coordinate descent on the summed squared difference between
+// these per-goalie area counts and the NHL EDGE counts for the 16 goalies
+// with the most shots against in 2025-26 (steps of 1 ft / 2 degrees, 0.5 ft
+// for the crease), then checked on 14 held-out goalies -- see the README's
+// "Shot areas" section. The red and blue lines are the NHL's, not fitted.
 export const AREA_BOUNDS = {
   creaseR: 6, // the crease: within 6 ft, in front of the goal line
   innerR: 24, // low slot / net sides / inner outside: within 24 ft

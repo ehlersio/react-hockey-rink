@@ -127,6 +127,19 @@ SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spel
   They were checked on 30 goalies' 2025-26 regular seasons (~69,000 shots on goal).
   On average 2.7% of a goalie's shots land in a different area than the NHL counts there, at most 4.3%.
   It's the same on goalies held out of the fit as on the ones it was fitted to.
+- **How the fit was done:** the areas are parameterised by nine numbers (two radii and four angles from the
+  centre of the goal line, the x where the points start, and the half-widths of the centre point and the strip
+  behind the net); the red line and blue line are the NHL's and were not fitted. For the 16 goalies with the
+  most shots against in 2025-26, each shot on goal from the play-by-play (folded onto one net by the sign of
+  the median x per game, period and goalie) was classified with a candidate set of boundaries, and the per-goalie
+  counts compared with the NHL EDGE per-area shots-against for the same goalie. The objective was the sum over
+  goalies and areas of the squared count difference. It was minimised by coordinate descent: from hand-picked
+  starting values, each parameter in turn was moved by ±1 or ±3 of its step (0.5 ft for the crease, 1 ft or 2°
+  otherwise), any move that lowered the error was kept, and the sweep repeated until no single move helped
+  (it converged in one round). A tenth parameter, a radius capping the high slot, never bound and was dropped.
+  The mirror image (L and R swapped) scored about 3× worse, which is how the shooter's-left convention was
+  settled. The 14 next-highest-volume goalies were held out: 2.7% average mismatch and 3.7% worst, against
+  2.6% and 4.3% on the goalies the fit used, so the boundaries aren't overfitted to them.
 - **The map:** `ShotAreaMap` draws the attacking half plus a strip past the red line.
   `children` are drawn on top in the rink's SVG coordinates (`toSvg(x, y)` converts from feet), e.g. shot dots on the same rink.
   `outlines={false}` leaves out the outlines of areas with no fill.
