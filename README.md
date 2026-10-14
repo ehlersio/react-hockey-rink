@@ -140,6 +140,10 @@ SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spel
   The mirror image (L and R swapped) scored about 3× worse, which is how the shooter's-left convention was
   settled. The 14 next-highest-volume goalies were held out: 2.7% average mismatch and 3.7% worst, against
   2.6% and 4.3% on the goalies the fit used, so the boundaries aren't overfitted to them.
+  `scripts/fit-areas.py` reproduces all of this from the NHL's public API (no credentials; Python 3.10+,
+  standard library only): run it bare to score the shipped `AREA_BOUNDS`, `--fit` to refit (it lands on the
+  shipped values from the hand-picked start), `--season` for another season. The first run fetches about
+  1,100 play-by-play files into `.cache/`; later runs take seconds.
 - **The map:** `ShotAreaMap` draws the attacking half plus a strip past the red line.
   `children` are drawn on top in the rink's SVG coordinates (`toSvg(x, y)` converts from feet), e.g. shot dots on the same rink.
   `outlines={false}` leaves out the outlines of areas with no fill.
@@ -226,6 +230,7 @@ npm run dev     # rebuild dist/ on change (for linking into an app)
 npm test        # Vitest tests (jsdom)
 npm run build   # library build (ESM + CJS) to dist/
 npm run lint
+python3 scripts/fit-areas.py --fit   # refit the shot-area boundaries (see Shot areas)
 ```
 
 ## License
