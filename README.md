@@ -30,7 +30,7 @@ const events = [
     id: 'evt-1',
     team: 'primary',           // 'primary' | 'opponent'
     type: 'goal',               // 'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'
-    x: 84, y: 3,                 // NHL ice coords: x ±100 (goal line to goal line), y ±42.5 (boards to boards)
+    x: 84, y: 3,                 // NHL ice coords: x ±100 (end boards to end boards; goal lines at ±89), y ±42.5 (boards to boards)
     period: 1,
     timeInPeriod: '9:14',
     shooterId: 1,
@@ -63,12 +63,12 @@ view of the same data).
 
 | Prop               | Type                              | Default | Description |
 |---------------------|-----------------------------------|---------|--------------|
-| `events`            | `Event[]`                         | `[]`    | Shot events to render — see schema below. |
-| `teamAbbr`           | `string`                          | `'TEAM'`| Abbreviation shown in the legend, zone labels, and popups for the primary team. |
-| `teamColor`          | `string` (any CSS color)          | —       | Fill color for the primary team's dots. Falls back to `var(--rink-team-primary)`. |
+| `events`            | `Event[]`                         | `[]`    | Shot events to render — see schema below. With none, the rink shows "Shot data appears here during and after games." |
+| `teamAbbr`           | `string`                          | `'TEAM'`| Abbreviation shown in the legend, zone labels, heat-mode button, and popups for the primary team. |
+| `teamColor`          | `string` (any CSS color)          | —       | Primary team's dot, legend-swatch, and zone-label color. Falls back to `var(--rink-team-primary)`. |
 | `flipPerspective`    | `boolean`                         | `false` | Flips which side the primary team attacks — for a defensive/PK-style view. |
-| `hidePlayerFilter`   | `boolean`                         | `false` | Hides the player-filter dropdown even if shooters are present. |
-| `readOnly`           | `boolean`                         | `false` | Hides the toolbar, zoom controls, legend, tooltip, and popup — renders a static rink. |
+| `hidePlayerFilter`   | `boolean`                         | `false` | Hides the player-filter dropdown. It otherwise appears whenever primary-team events carry a `shooterId` (labelled with `shooterName`). |
+| `readOnly`           | `boolean`                         | `false` | Hides the toolbar, zoom controls, heat controls, legend, tooltip, and popup, and turns off dot hover/click. Wheel zoom, drag-pan, and pinch still work. |
 | `renderMedia`        | `(event) => ReactNode`            | —       | Your own media at the top of the popup — a replay, a different player, a still. Called for every event; return `null` to keep the default (a goal's `videoUrl` in an iframe). |
 
 ### Event schema
@@ -80,7 +80,7 @@ type Event = {
   type: 'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot';
   x: number;              // -100..100, ice coordinates
   y: number;               // -42.5..42.5
-  period: number;           // 1-3 regulation, 4+ = OT1, OT2, ...
+  period: number;           // 1-3 regulation, 4 = OT, 5+ = OT2, OT3, ... (leave shootout attempts out)
   timeInPeriod: string;      // e.g. '9:14'
   shooterId?: string | number;
   shooterName?: string;
@@ -107,7 +107,7 @@ library ships a classifier and a map for them.
 import { ShotAreaMap, shotArea, SHOT_AREAS } from 'react-hockey-rink';
 
 shotArea(78, 2);   // 'Low Slot' -- (x, y) in play-by-play feet, attacking right
-SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spellings
+SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spellings; danger is the NHL's 'high' | 'mid' | 'long' grouping, or null
 
 <ShotAreaMap
   areas={{
@@ -132,6 +132,12 @@ SHOT_AREAS;        // [{ name: 'Crease', danger: 'high' }, ...] all 17, NHL spel
   `outlines={false}` leaves out the outlines of areas with no fill.
   An area missing from `areas` is drawn as an empty outline.
   Labels are colored with `--rink-area-label` / `--rink-area-label-halo`, and outlines with `--rink-area-stroke` / `--rink-area-selected`.
+  An area's `title` is its hover tooltip and, with `onSelect`, its accessible name; tappable areas also take Enter/Space.
+  `ariaLabel` (default `'Shot areas'`) labels the whole SVG, and `className` is added to it.
+- **Geometry exports:** `toSvg(x, y)` returns `{ px, py }` in the rink's 600×255 SVG viewBox (`W`, `H`, center `CX`, `CY`).
+  `SHOT_AREA_POLYGONS` has each area's outline as `[[x, y], ...]` in feet and `SHOT_AREA_LABEL_AT` each label's `[x, y]`, both attacking right;
+  `GOAL_LINE_X` (89) and `BLUE_LINE_X` (25) are the lines they're built on.
+  `RinkMarkings` is the bare rink as an SVG `<g>`, for building your own chart on the same geometry.
 
 ## Theming
 
@@ -148,6 +154,9 @@ required:
   --rink-radius-lg: 8px;
 }
 ```
+
+The rink markings and the opponent/blocked-shot dot colors are drawn inline in
+the SVG and aren't tokens.
 
 Full token list:
 
@@ -173,15 +182,21 @@ Full token list:
 | `--rink-font-display` | `'Barlow Condensed', sans-serif` | Popup headings |
 | `--rink-font-mono` | `'DM Mono', monospace` | Speed/zoom readouts |
 | `--rink-team-primary` | `#ff4422` | Primary-team dot fill fallback |
+| `--rink-area-stroke` | `rgba(255,255,255,0.9)` | `ShotAreaMap` area outlines (inline fallback; not set in the stylesheet) |
+| `--rink-area-selected` | `#111` | `ShotAreaMap` selected-area outline (inline fallback) |
+| `--rink-area-label` | `#111` | `ShotAreaMap` label text (inline fallback) |
+| `--rink-area-label-halo` | `rgba(255,255,255,0.85)` | `ShotAreaMap` label halo (inline fallback) |
 
 ## Examples
 
-**Heat map instead of dots by default** — not exposed as a prop; the toggle
-lives in the toolbar. Render with `readOnly` and drive `viewMode` yourself if
-you need a heat-only embed (open an issue/PR if you need this as a prop).
+**Heat map instead of dots by default** — not exposed as a prop. The view
+mode is internal state and the only toggle lives in the toolbar, so a
+`readOnly` rink always shows dots (open an issue/PR if you need a
+`defaultViewMode` prop).
 
-**Half rink on mobile** happens automatically below a 600px container width;
-users can also toggle it manually via the toolbar on wider screens.
+**Half rink on mobile** happens automatically when the browser window is
+narrower than 600px (window width, not the container's); users can also
+toggle it manually via the toolbar on wider windows.
 
 **Read-only embed** (e.g. a small preview card, no interaction):
 
@@ -194,7 +209,8 @@ users can also toggle it manually via the toolbar on wider screens.
 ```bash
 npm install
 npm run demo    # local demo app with fixture data, http://localhost:5183
-npm test        # Vitest smoke tests
+npm run dev     # rebuild dist/ on change (for linking into an app)
+npm test        # Vitest tests (jsdom)
 npm run build   # library build (ESM + CJS) to dist/
 npm run lint
 ```
